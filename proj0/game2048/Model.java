@@ -5,7 +5,7 @@ import java.util.Observable;
 
 
 /** The state of a game of 2048.
- *  @author TODO: YOUR NAME HERE
+ *  @author YOYO
  */
 public class Model extends Observable {
     /** Current contents of the board. */
@@ -137,7 +137,13 @@ public class Model extends Observable {
      *  Empty spaces are stored as null.
      * */
     public static boolean emptySpaceExists(Board b) {
-        // TODO: Fill in this function.
+        //check the num in the board
+        int sz = b.size();
+        for (int c = 0; c < sz; c++) {
+            for (int r = 0; r <sz; r++) {
+                if (b.tile(c, r) == null) return true;
+            }
+        }
         return false;
     }
 
@@ -147,7 +153,14 @@ public class Model extends Observable {
      * given a Tile object t, we get its value with t.value().
      */
     public static boolean maxTileExists(Board b) {
-        // TODO: Fill in this function.
+        //need to consider the null tile.
+        int sz = b.size();
+        for (int c = 0; c < sz; c++) {
+            for (int r = 0; r < sz; r++) {
+                if (b.tile(c, r) != null && b.tile(c, r).value()== MAX_PIECE)
+                    return true;
+            }
+        }
         return false;
     }
 
@@ -159,7 +172,36 @@ public class Model extends Observable {
      */
     public static boolean atLeastOneMoveExists(Board b) {
         // TODO: Fill in this function.
-        return false;
+        // there is at least one empty space-> call emptySpaceExists
+        boolean state = false;
+        if (emptySpaceExists(b)) return true;
+        if (maxTileExists(b)) return false;
+
+        // check two adjacent tiles with same value;
+        /** As graph traversal each node check its four directions find are there any same value existed*/
+
+        int[] dir = {-1, 0, 1, 0, -1};
+        int sz = b.size();
+
+        for (int c = 0; c < sz; c++) {
+            for (int r = 0; r < sz; r++) {
+                int curTile = b.tile(c, r).value();
+                for (int k = 0; k < 4; k++) {
+                    int nc = c + dir[k];
+                    int nr = r + dir[k + 1];
+                    if (nc > 0 && nc < sz && nr > 0 && nr < sz) {
+                        Tile newTile = b.tile(nc, nr);
+                        if (curTile == newTile.value()) state = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+
+        return state;
+
+
     }
 
 
