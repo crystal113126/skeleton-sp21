@@ -113,7 +113,59 @@ public class Model extends Observable {
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+        //
+        board.setViewingPerspective(side);
+        int sz = board.size();
+        for (int c = 0; c < sz; c++) {
+            // idx: 3, 2, 1, 0
+            //     [4,null ,2, 2] -> [4, 2, 2, null]-> [4,4,null ,null ] moving without merge
 
+            for (int r = sz - 1; r >= 0; r--) {
+                Tile t = board.tile(c, r);
+                // t == null -> continue;
+                if (t != null) {
+                    //check move
+                    int nextPos = sz - 1;
+                    while (nextPos >= r){
+                          if (board.tile(c, nextPos) == null)
+                              break;
+                          nextPos--;
+
+                    }
+                    if (nextPos >= r) {
+                        board.move(c, nextPos, t);
+                        changed = true;
+                    }
+
+                }
+
+            }
+
+            // move with merge
+            for (int r = sz - 1; r >= 0; r--) {
+                Tile curT = board.tile(c, r);
+                int nextLine = r - 1;
+                if (nextLine < 0) break;
+                Tile nextT = board.tile(c, nextLine);
+                if (nextT == null || curT == null) break;
+                if (nextT.value() == curT.value()) {
+                    board.move(c, r, nextT);
+                    score += curT.value() * 2;
+                    for (int p = nextLine - 1; p >= 0; p--) {
+                        Tile nnT = board.tile(c, p);
+                        if (nnT == null) break;
+                        if (p < sz) {
+                            board.move(c, p + 1, nnT);
+                        }
+                    }
+                }
+                changed = true;
+
+            }
+
+        }
+
+        board.setViewingPerspective(Side.NORTH);
         checkGameOver();
         if (changed) {
             setChanged();
