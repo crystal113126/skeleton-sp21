@@ -1,10 +1,14 @@
 package capers;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Scanner;
+
 import static capers.Utils.*;
 
 /** A repository for Capers 
- * @author TODO
+ * @author JJ
  * The structure of a Capers Repository is as follows:
  *
  * .capers/ -- top level folder for all persistent data in your lab12 folder
@@ -18,8 +22,14 @@ public class CapersRepository {
     static final File CWD = new File(System.getProperty("user.dir"));
 
     /** Main metadata folder. */
-    static final File CAPERS_FOLDER = null; // TODO Hint: look at the `join`
-                                            //      function in Utils
+    static final File CAPERS_FOLDER = join(CWD, "test_capers"); // TODO Hint: look at the `join`
+    static {
+        if (!CAPERS_FOLDER.exists())
+            CAPERS_FOLDER.mkdir();
+    }
+                                                                  //      function in Utils
+    static final File file = join(CAPERS_FOLDER ,".capers");
+    static final File story = join("test_capers/.capers","story");
 
     /**
      * Does required filesystem operations to allow for persistence.
@@ -31,7 +41,11 @@ public class CapersRepository {
      *    - story -- file containing the current story
      */
     public static void setupPersistence() {
-        // TODO
+
+        if (!file.exists())
+            file.mkdir();
+
+
     }
 
     /**
@@ -40,7 +54,10 @@ public class CapersRepository {
      * @param text String of the text to be appended to the story
      */
     public static void writeStory(String text) {
-        // TODO
+
+        writeContents(story, readContentsAsString(story), "\n", text);  // keep the previous context in to the same file
+        System.out.println(readContentsAsString(story));
+
     }
 
     /**
@@ -50,6 +67,8 @@ public class CapersRepository {
      */
     public static void makeDog(String name, String breed, int age) {
         // TODO
+        Dog dog = new Dog(name, breed, age);
+        dog.saveDog();
     }
 
     /**
