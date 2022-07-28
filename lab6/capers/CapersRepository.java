@@ -28,8 +28,8 @@ public class CapersRepository {
             CAPERS_FOLDER.mkdir();
     }
                                                                   //      function in Utils
-    static final File file = join(CAPERS_FOLDER ,".capers");
-    static final File story = join("test_capers/.capers","story");
+    static final File fileF = join(CAPERS_FOLDER ,".capers");
+    static File storyF = join(fileF,"story.txt");
 
     /**
      * Does required filesystem operations to allow for persistence.
@@ -42,10 +42,8 @@ public class CapersRepository {
      */
     public static void setupPersistence() {
 
-        if (!file.exists())
-            file.mkdir();
-
-
+        if (!fileF.exists())
+            fileF.mkdir();
     }
 
     /**
@@ -53,11 +51,27 @@ public class CapersRepository {
      * to a file called `story` in the .capers directory.
      * @param text String of the text to be appended to the story
      */
-    public static void writeStory(String text) {
+    public static void writeStory(String text)  {
 
-        writeContents(story, readContentsAsString(story), "\n", text);  // keep the previous context in to the same file
-        System.out.println(readContentsAsString(story));
+        if (!storyF.exists())
+        {
+            try {
+                storyF.createNewFile();  // file created here
+                //System.out.println("file != null");
+            }
+            catch(Exception e)
+            {
+                System.out.println(e.getMessage());
+            }
+            writeContents(storyF, text);
 
+        }
+        else {
+            writeContents(storyF, readContentsAsString(storyF), "\n", text);
+            // }// keep the previous context in to the same file
+        }
+
+        System.out.println(readContentsAsString(storyF));
     }
 
     /**
